@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+{% autoescape true %}
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>SOOBIN SOYOUNG DIARY</title>
+        <script type="text/javascript">
+            function makeFileList() {
+                var input = document.getElementById("filesToUpload");
+                var ul = document.getElementById("fileList");
+                while (ul.hasChildNodes()) {
+                    ul.removeChild(ul.firstChild);
+                }
+                for (var i = 0; i < input.files.length; i++) {
+                    var li = document.createElement("li");
+                    li.innerHTML = input.files[i].name;
+                    ul.appendChild(li);
+                }
+                if (!ul.hasChildNodes()) {
+                    var li = document.createElement("li");
+                    li.innerHTML = 'No Files Selected';
+                    ul.appendChild(li);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <strong>Upload Files:</strong>
+        <form method="post" action="{{ upload_url }}" enctype="multipart/form-data">
+            <p>
+                <input type="file" name="filesToUpload" id="filesToUpload" multiple="" onchange="makeFileList();" />
+                <input type="submit" value="Send">
+            </p>
+            <p>
+                Tags(e.g. tag1,tag2,tag3) : <input type="text" name="taglist" size="100" />
+            </p>
+        </form>
+        <p><strong>Files You Selected:</strong></p>
+        <ul id="fileList"><li>No Files Selected</li></ul>
+    </body>
+</html>
+{% endautoescape %}

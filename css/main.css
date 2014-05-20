@@ -1,0 +1,76 @@
+a:link {color:black; text-decoration:none;}
+a:visited {color:black; text-decoration:none;}
+a:hover {color:black; text-decoration:underline;}
+
+#photologin a:link {color:white; text-decoration:none;}
+#photologin a:visited {color:white; text-decoration:none;}
+#photologin a:hover {color:white; text-decoration:none;}
+
+body{
+    margin-top: 0px;
+    margin-left: 0px;
+}
+
+#maingrap{
+    margin:0 auto;
+    width:980px;
+}
+#maintitle {
+    width:980px;
+    text-align:center;
+    font-size: 40px;
+}
+#taglist {
+    width:980px;
+    text-align:center;
+    color:black;
+    margin-top:10px;
+    margin-bottom:30px;
+}
+
+#Photos {
+    width:980px;
+    text-align:center;
+}
+    .photogrid{
+        width:980px;
+        margin:0px;
+        background:#161613;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .boxcaption{
+        font-size:50pt;
+        float: left;
+        position: absolute;
+        background: #fff;
+        height: 30%;
+        width: 100%;
+        opacity: .5;
+        /* For IE 5-7 */
+        filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
+        /* For IE 8 */
+        -MS-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+     }
+     
+     .captionfull .boxcaption {
+        top: 0px;
+        left: 0px;
+     }
+    .caption .boxcaption {
+        top: 0px;
+        left: 0px;
+    }
+    
+#footer{
+    margin:0 auto;
+    padding-top:5px;
+    width:980px;
+    height:30px;
+    text-align: center;
+    border:1px solid #e1e1e1;
+    border-bottom: #ffffff;
+    border-left: #ffffff;
+    border-right: #ffffff;
+}

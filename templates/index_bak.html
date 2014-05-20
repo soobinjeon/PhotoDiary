@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>SOOBIN SOYOUNG DIARY</title>
+</head>
+<body>
+    <header>
+        SB SY Diary
+    </header>
+    <div>
+        <canvas id="idCanvas" width="100" height="30">
+            
+        </canvas>
+    </div>
+    <div id="taglist">
+        {% for tag in tags %}
+            <a href="/?tag={{tag.tag}}">{{tag.tag}}</a>
+        {% endfor %}
+    </div>
+    <div id="photolist">
+        {% for photo in photolist %}
+            {% if loop.index % 3 == 0 %}
+                <br/>
+            {% endif %}
+            <img src="imageview/{{photo.Imagekey.key()}}" />
+        {% endfor %}
+    </div>
+    <div id="upload">
+        <a href="/upload/uploadform">Upload Images</a>
+    </div>
+    <footer>
+        footer
+    </footer>
+</body>
+</html>
+{% endautoescape %}

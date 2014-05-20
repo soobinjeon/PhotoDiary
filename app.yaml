@@ -1,0 +1,41 @@
+application: sbsydiary
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /
+  script: main.app
+
+- url: /upload/.*
+  script: uploadimage.app
+  login: required
+
+- url: /imageview/.*
+  script: imageview.app
+
+- url: /css
+  static_dir: css
+
+- url: /js
+  static_dir: js
+
+- url: /uploadurl
+  static_dir: uploadurl
+  login: required
+
+- url: /login/.*
+  script: loginconfirm.app
+
+libraries:
+- name: webapp2
+  version: "2.5.2"
+- name: PIL
+  version: latest
+- name: jinja2
+  version: latest

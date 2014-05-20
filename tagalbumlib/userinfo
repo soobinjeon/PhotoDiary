@@ -1,0 +1,13 @@
+from google.appengine.ext.webapp.util import run_wsgi_app
+def UserINFO():
+    user = users.get_current_user()
+    if user:  # signed in already
+        if int(user.user_id()) == int(photoaccount.AccountAuthID[0]) and str(user.federated_identity()) == str(photoaccount.AccountAuthFED[0]):
+            self.response.out.write("logined!!")
+        else:
+            self.response.out.write("not!! logined!")            
+    else:     # let user choose authenticator
+        self.response.out.write('Hello world! Sign in at: ')
+        for name, uri in providers.items():
+            self.response.out.write('[<a href="%s">%s</a>]' % (
+                users.create_login_url(federated_identity=uri), name))

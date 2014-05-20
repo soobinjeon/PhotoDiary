@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+{% autoescape true %}
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="/js/jquery-2.1.1.js"></script>
+    <script src="/js/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <div id="photologin">
+        {% if uinfo == 0 %}
+                <a href="{{feduri}}"><b>Login</b></a>
+        {% else %}
+            <a href="{{logout}}">logout</a>
+        {% endif %}
+    </div>
+    <div id="maingrap">
+        <div id="maintitle">
+            <a href="/">SBSY Diary</a>
+        </div>
+        <div id="taglist">
+            <b>Tags</b><br/>
+            {% for tag in tags %}
+                {% if loop.index % 8 == 0 %}
+                    <br/>
+                {% endif %}
+                <a href="/?tag={{tag.tag}}">{{tag.tagname}}</a>
+
+                {% if loop.index != loop.length %}
+                    /
+                {% endif %}
+            {% endfor %}
+            <br/>
+            {% if uinfo == 1 %}
+                <a href="/uploadurl/uploadform.html"><b>Upload Img</b></a>
+            {% endif %}
+        </div>
+        <div id="Photos">
+            <div id="Photo">
+             
+            </div>
+            <a href="#" id="moreimage"></a>
+        </div>
+        <div id="footer">
+            Copyright(c) Soobin & Soyoung All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
+{% endautoescape %}
