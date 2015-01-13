@@ -61,7 +61,9 @@ function printPhotos(obj,tag){
         //write tag comment
         if(i == window.photosp && tag != null && ps != null && window.isfirst == true){
             var cmtwrap = $("#TagCommentWrap");
-            var titlestr = "<h1>"+ps[0].tagname+"</h1>";
+            var titlestr = "<h1>" + ps[0].tagname + "</h1>";
+            if (ps[i].isadmin == 1) 
+                titlestr += "<p id='admintag_"+ps[i].imagekey+"'><a class='admintag' href='#none'>-delete tag-</a></p>";
             titlestr += "<p class='PhotoTagComment'>"+ps[0].tagcomment+"</p>";
             cmtwrap.append(titlestr);
         }
@@ -95,6 +97,7 @@ function printPhotos(obj,tag){
         //prompt("Copy to clipboard: Ctrl+C, Enter", oArg.Document);
         TagCommentEvent(ps);
         DeletePhoto(ps[i]);
+        DeleteTag(ps[i]);
 
         $(".tagcomment").hide(); //Hide Comment!
         nobj.children("div").children('img').hide();
@@ -114,6 +117,19 @@ function printPhotos(obj,tag){
     //editmode();
 }
 
+function DeleteTag(tcps) {
+    $("#admintag_"+tcps.imagekey+" > a").click(function () {
+        if (confirm("Do you wnat to delete this Tag?")) {
+            var posting = $.post('/upload/uploadimage', {
+                'request': 'deletetag',
+                'tagname': tcps.tag
+            });
+            posting.done(function (data) {
+                window.location.href = '/';
+            });
+        }
+    });
+}
 //photo admin mode
 function AdminPhotoMode(tcps) {
     if (tcps.isadmin == 1) {

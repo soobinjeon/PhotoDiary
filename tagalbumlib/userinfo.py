@@ -27,7 +27,7 @@ def UserINFO():
         for num in range(0,2):
             if int(user.user_id()) == int(photoaccount.AccountAuthID[num]) and str(user.federated_identity()) == str(photoaccount.AccountAuthFED[num]):
                 return 1
-        return 1 #2 -> must change '2' move to server
+        return 2 #2 -> must change '2' move to server
     else:     # let user choose authenticator
         return 0
 

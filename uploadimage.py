@@ -140,14 +140,18 @@ class UploadImage(webapp2.RequestHandler):
 
     def post(self):
         if self.request.get('prequest') == 'tags':
-            logging.debug("start Tag! -> %s",self.request.get('tags'))
+            #logging.debug("start Tag! -> %s",self.request.get('tags'))
             self.insertTag(self.request.get('tags'))
             self.response.write("insert Done")
         elif self.request.get('request') == 'updatetagcomment':
             tagname = self.request.get('tagname')
             updatedcomment = self.request.get('updatedcomment')
             self.updateTagComment(tagname, updatedcomment)
-            logging.debug("updated tag name : %s"%tagname)
+            #logging.debug("updated tag name : %s"%tagname)
+        elif self.request.get('request') == 'deletetag':
+            logging.debug("delete tag")
+            tagname = self.request.get('tagname')
+            self.deleteTag(tagname)
         else:
             if userinfo.UserINFO() != 1:
                 return -1
@@ -226,6 +230,13 @@ class UploadImage(webapp2.RequestHandler):
             t = tq.get()
             t.comment = updatedcomment
             t.put()
+    def deleteTag(self, tagname):
+        #key = self.request.get('key') or ''
+        #blobstore.delete(key)
+        logging.debug("delete tag : %s"%tagname)
+        qu = db.GqlQuery("select * from TagList where ancestor is :1 and tag = :td",photodb.getKey(),td=tagname)
+        db.delete(qu)
+        
                 
 app = webapp2.WSGIApplication(
     [

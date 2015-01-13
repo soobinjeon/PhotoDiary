@@ -45,6 +45,11 @@ body{
         font-weight: bold;
         font-size: 10pt;
     }
+    .admintag{
+        color:#ffd800;
+        font-weight: bold;
+        font-size: 10pt;
+    }
     
 #Photos {
     width:980px;
