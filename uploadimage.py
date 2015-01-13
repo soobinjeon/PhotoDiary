@@ -198,13 +198,17 @@ class UploadImage(webapp2.RequestHandler):
         return result
     
     def insertTag(self,tags):
-        logging.debug("insert start")
+        #logging.debug("insert start")
         if tags != '':
             taglist = self.splitTag(tags)
             nametaglist = self.splitTag(tags,0)
-            logging.debug("tag count : %s"%len(taglist))
+            #logging.debug("name tag list : %s"%len(nametaglist))
+            #logging.debug("tag count : %s"%len(taglist))
+            
             cnt = 0
             for tag in taglist:
+                #logging.debug("tag name : %s"%nametaglist[cnt])
+                #logging.debug("tag : %s"%tag)
                 tq = db.GqlQuery("select * from TagList where ancestor is :1 and tag = :td",photodb.getKey(),td=tag)
                 if tq.count() == 0:
                     t = photodb.TagList(parent = photodb.getKey())
@@ -212,11 +216,11 @@ class UploadImage(webapp2.RequestHandler):
                     t.tagname = nametaglist[cnt]
                     t.comment = ''
                     t.put()
-                    cnt = cnt + 1
                 else:
                     pass
+                cnt = cnt + 1
     def updateTagComment(self, tagname, updatedcomment):
-        logging.debug("update comment : %s"%updatedcomment)
+        #logging.debug("update comment : %s"%updatedcomment)
         tq = db.GqlQuery("select * from TagList where ancestor is :1 and tag = :td",photodb.getKey(),td=tagname)
         if tq.count() != 0:
             t = tq.get()
