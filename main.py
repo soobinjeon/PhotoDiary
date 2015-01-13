@@ -20,6 +20,7 @@ import urllib
 import jinja2
 import json
 import logging
+import random
 
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -49,7 +50,7 @@ class MainHandler(webapp2.RequestHandler):
         if self.request.get('request') == 'photos':
             results = []
             plist = self.viewPhotosbyTag(self.request.get('photo_tag'))
-            logging.debug("plist = %s"%len(plist))
+            logging.debug("plirst = %s"%len(plist))
 #            for num in range(photosp,photoep):
             for ph in plist:
                 result = {"imagekey" : str(ph.photo.Imagekey.key()),
@@ -103,13 +104,27 @@ class MainHandler(webapp2.RequestHandler):
             tlist = self.viewTaglist()
             for t1 in tlist:
                 logging.debug("tname : %s"%t1.tag)
-                photos = db.GqlQuery("select * from PhotoTag "
-                                     "where ancestor is:1 and tag = :td order by date desc",
-                                     photodb.getKey(),td=t1.tag).fetch(1)
-                pcnt = 0
-                for photo in photos:
-                    photolist.append(album(photo,t1,photo.date))
-                    pcnt = pcnt + 1
+
+                if t1.tag =='handson':
+                    photos = db.GqlQuery("select * from PhotoTag "
+                                         "where ancestor is:1 and tag = :td order by date desc",
+                                         photodb.getKey(),td=t1.tag).fetch(1)
+                    pcnt = 0
+                    for photo in photos:
+                        photolist.append(album(photo,t1,photo.date))
+                        pcnt = pcnt + 1
+                else:
+                    photos = db.GqlQuery("select * from PhotoTag "
+                                         "where ancestor is:1 and tag = :td order by date desc",
+                                         photodb.getKey(),td=t1.tag)
+                    temppl = []
+                    for ppp in photos:
+                        temppl.append(ppp)
+                    if len(temppl) > 0:    
+                        photo = random.choice(temppl)
+#                    logging.debug("photosize : %s"%len(temppl))
+                        photolist.append(album(photo,t1,photo.date))
+
                     
         photolist.sort()
 #        if tag != '':

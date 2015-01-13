@@ -4,6 +4,8 @@ var photoep = photolisting_num;
 var photodatas;
 var isfirst = true;
 var isimageEnd = false;
+var iscommentupdating = false;
+var isphotodeleting = false;
 
 $(document).ready(function () {
     var tagParam = GetURLParameter('tag');
@@ -19,7 +21,6 @@ $(document).ready(function () {
             return false;
         }
     });
-    
 });
 
 //Photo Image Control Function
@@ -33,8 +34,8 @@ function getPhotoDatas(obj,tag) {
             photodatas = $.parseJSON(data);
             //alert("te : "+photodatas.length);
             printPhotos(obj,tag);
+            window.isfirst = false;
         });
-        window.isfirst = false;
     }else{
         printPhotos(obj,tag);
     }
@@ -56,26 +57,45 @@ function printPhotos(obj,tag){
         $("<p><img src='css/upload/images/loading2.gif' width='100'/></p>").attr('class', 'loading').appendTo(nobj);
         var addimgdivs;
         var addimgdive;
+        
+        //write tag comment
+        if(i == window.photosp && tag != null && ps != null && window.isfirst == true){
+            var cmtwrap = $("#TagCommentWrap");
+            var titlestr = "<h1>"+ps[0].tagname+"</h1>";
+            titlestr += "<p class='PhotoTagComment'>"+ps[0].tagcomment+"</p>";
+            cmtwrap.append(titlestr);
+        }
+        
         if(tag == null){
             addimgdivs = "<div class='photogrid captionfull'>";
             addimgdive = "<a href='/?tag="+ps[i].tag+"'><div class='cover boxcaption'>"+
                     "<p>"+ps[i].tagname+ "</p>"+
-                    updateTagComment(ps[i])+
+                    AdminTagComment(ps[i])+
 //                    "<p>"+ps[i].tagcomment+ "</p>"+
 //                    updateTagComment()+
                     "</div></a>"+
                          "</div>";
+                 //javascript:alert(document.body.innerHTML);
         }else{
-            addimgdivs = "<div class='photogrid captionfull'>";
-            addimgdive = "<div class='cover boxcaption'>"+
+            addimgdivs = "<div id='"+ps[i].imagekey+"'>";
+            addimgdive = "<div >"+
                     "<p>"+ps[i].imagecomment+ "</p>"+
                     "</div>"+
                          "</div>";
+
+            //Admin mode, if you want delete the selected picture
+            addimgdivs += AdminPhotoMode(ps[i]);
+            
         }
         var addimg = addimgdivs+
                 "<img src='/imageview/" + ps[i].imagekey + "' width='980px' id='" + imgid + "' alt='"+ps[i].tagname+"'/>"+
                 addimgdive;
         nobj.append(addimg);
+        //javascript:alert(document.body.innerHTML);
+        //prompt("Copy to clipboard: Ctrl+C, Enter", oArg.Document);
+        TagCommentEvent(ps);
+        DeletePhoto(ps[i]);
+
         $(".tagcomment").hide(); //Hide Comment!
         nobj.children("div").children('img').hide();
         $("#" + imgid).load(function () {
@@ -91,22 +111,107 @@ function printPhotos(obj,tag){
     //$(this).fadeIn();
     photogrid();
     addPhotolist();
-    editmode();
+    //editmode();
 }
-function updateTagComment(ps){
-    if(ps.isadmin == 1){
-        str = "<div class='tagcomment'>";
-        str += ps.tagcomment;
-        str += "<a href='#none'>admin</a>";
-        str += "</div>";
-        
-        $(".tagcomment a",this).click(function(){
-                $(this).append("clicked");
+
+//photo admin mode
+function AdminPhotoMode(tcps) {
+    if (tcps.isadmin == 1) {
+        return "<div id='deletephoto_"+tcps.imagekey+"'><a id='"+tcps.imagekey+"' href='#none'>(Delete Below Photo)</a></div>";
+    } else
+        return "";
+}
+
+function DeletePhoto(selectedps) {
+    //$(".deletephoto > a").click(function () {
+    $("#deletephoto_"+selectedps.imagekey).click(function (){
+        var tc = $(this).parent(this).parent(this);
+        if (confirm("delete photo?")) {
+            var posting = $.post('/upload/uploadimage', {
+                '_method': 'DELETE',
+                'key': selectedps.imagekey
+            });
+            posting.done(function (data) {
+                tc.remove();
+            });
+        }
+    });
+}
+
+function findPSbyImageKey(ps, tn) {
+    for (var i = 0; i < ps.length; i++) {
+        if (ps[i].imagekey == tn)
+            return ps[i];
+    }
+    return null;
+}
+/**
+Tag Comment Text Box for Updating comment
+*/
+function TagCommentEvent(ps){
+    $(".tagcomment > a").click(function(){
+                //alert("count");
+                var tc = $(this).parent(this);
+                var tid = $(this).attr('id');
+                var selectedps = findTagbyTagname(ps, tid);
+                if(selectedps != null){
+                    var str = "";
+                    str = "<textarea class='phototextbox' row='4' cols='100'>"+selectedps.tagcomment+"</textarea>";
+                    str += "<br/><button class='submit' type='submit' value='submit'>Update</button>";
+                    str += "<button class='cancel' type='cancel' value='cancel'>Cancel</button>";
+                    tc.html(str);
+                    UpdateTagComment(tc, tid, selectedps);
+                }
         });
+}
+//Print "Update Tag"
+function AdminTagComment(tcps, comment) {
+    tn = tcps.tag;
+    commentid = "tagcomment_" + tcps.tag;
+    var tcomment = "";
+    if (comment == null)
+        tcomment = tcps.tagcomment;
+    else
+        tcomment = comment;
+    if(tcps.isadmin == 1){
+        str = "<div id='" + commentid + "' class='tagcomment'>";
+        //"+tcps.tagcomment+"
+        str += tcomment + "</br>";
+        str += "<a id='"+tn+"' href='#none'>Update Text<br/></a>";
+        str += "</div>";
         return str;
     }
     else
-        return "<div class='tagcomment'>"+ps.tagcomment+ "</div>";
+        return "<div class='tagcomment'>" + tcomment + "</div>";
+}
+
+//update Tag Comment
+function UpdateTagComment(tc, tid, selectedps) {
+    $("#tagcomment_"+selectedps.tag+" > .submit").click(function () {
+        var updatedtx = $("#tagcomment_" + selectedps.tag + " > .phototextbox").val();
+        var posting = $.post('/upload/uploadimage', {
+            'request': 'updatetagcomment',
+            'tagname': selectedps.tag,
+            'updatedcomment': updatedtx
+        });
+        posting.done(function (data) {
+            tc.html(AdminTagComment(selectedps, updatedtx));
+            TagCommentEvent(window.photodatas);
+        });
+       
+    });
+
+    $("#tagcomment_" + selectedps.tag + " > .cancel").click(function () {
+        tc.html(AdminTagComment(selectedps));
+        TagCommentEvent(window.photodatas);
+    });
+}
+function findTagbyTagname(ps, tn){
+    for(var i=0;i<ps.length;i++){
+        if(ps[i].tag == tn)
+            return ps[i];
+    }
+    return null;
 }
 
 function editmode(){

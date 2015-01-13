@@ -23,7 +23,6 @@ import webapp2
 import time
 import logging
 
-
 WEBSITE = 'http://sbsydiary.appspot.com/'
 UPLOADURL = '/upload/uploadimage'
 MIN_FILE_SIZE = 1  # bytes
@@ -144,6 +143,11 @@ class UploadImage(webapp2.RequestHandler):
             logging.debug("start Tag! -> %s",self.request.get('tags'))
             self.insertTag(self.request.get('tags'))
             self.response.write("insert Done")
+        elif self.request.get('request') == 'updatetagcomment':
+            tagname = self.request.get('tagname')
+            updatedcomment = self.request.get('updatedcomment')
+            self.updateTagComment(tagname, updatedcomment)
+            logging.debug("updated tag name : %s"%tagname)
         else:
             if userinfo.UserINFO() != 1:
                 return -1
@@ -211,7 +215,14 @@ class UploadImage(webapp2.RequestHandler):
                     cnt = cnt + 1
                 else:
                     pass
-
+    def updateTagComment(self, tagname, updatedcomment):
+        logging.debug("update comment : %s"%updatedcomment)
+        tq = db.GqlQuery("select * from TagList where ancestor is :1 and tag = :td",photodb.getKey(),td=tagname)
+        if tq.count() != 0:
+            t = tq.get()
+            t.comment = updatedcomment
+            t.put()
+                
 app = webapp2.WSGIApplication(
     [
         ('/upload/uploadimage', UploadImage)
