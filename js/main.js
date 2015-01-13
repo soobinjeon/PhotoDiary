@@ -16,7 +16,7 @@ $(document).ready(function () {
     getPhotoDatas($('#Photo'), tagParam);
     
     $(window).scroll(function(){
-        if($(window).scrollTop() == $(document).height()-$(window).height()){
+        if($(window).scrollTop() >= ($(document).height() * 0.9)-$(window).height()){
             getPhotoDatas($('#Photo'), tagParam);
             return false;
         }
