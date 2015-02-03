@@ -50,7 +50,10 @@ body{
         font-weight: bold;
         font-size: 10pt;
     }
+#fblikebutton{
+    width:980px;
     
+}
 #Photos {
     width:980px;
     text-align:center;
