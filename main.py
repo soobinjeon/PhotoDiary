@@ -65,12 +65,20 @@ class MainHandler(webapp2.RequestHandler):
         
     def get(self):
         tags = self.viewTaglist()
+        user = users.get_current_user()
+        uf = "none"
+        ua = "none"
+        if user:
+            uf = user.federated_identity()
+            ua = user.user_id()
 
         template_values = {
             'tags': tags,
             'uinfo': userinfo.UserINFO(),
             'feduri': users.create_login_url(federated_identity=userinfo.PROVIDERMAINURI),
             'logout': users.create_logout_url('/'),
+            'temp_fed' : uf,
+            'temp_auth' : ua,
         }
         template = JINJA_ENVIRONMENT.get_template('/templates/index.html')
         self.response.write(template.render(template_values))

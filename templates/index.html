@@ -33,6 +33,13 @@
             <a href="/">SBSY Diary</a>
         </div>
         <div id="taglist">
+            <!--{% if uinfo == 0 %}
+                
+            {% else %}
+                {{temp_fed}}<br />
+                {{temp_auth}}<br />
+            {% endif %}
+            -->
             <b>Tags</b><br/>
             {% for tag in tags %}
                 {% if loop.index % 8 == 0 %}
